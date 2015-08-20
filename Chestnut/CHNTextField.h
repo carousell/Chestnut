@@ -12,4 +12,6 @@
 
 @property (strong, nonatomic) NSNumberFormatter *formatter;
 
+- (NSString *)priceString;
+
 @end

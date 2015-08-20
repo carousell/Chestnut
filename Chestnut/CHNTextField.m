@@ -75,7 +75,26 @@
     } else {
         super.text = [self.formatter stringFromNumber:price];
         self.price = price;
+        NSInteger maximumFractionDigits = self.formatter.maximumFractionDigits;
+        NSRange decimalPointRange = [text rangeOfString:@"." options:NSBackwardsSearch];
+        if (maximumFractionDigits <= 0 && decimalPointRange.location != NSNotFound) {
+            self.normalizedPriceString = [NSMutableString stringWithString:[text substringToIndex:decimalPointRange.location]];
+        } else {
+            self.normalizedPriceString = [NSMutableString stringWithString:[text stringByReplacingOccurrencesOfString:@"." withString:@""]];
+        }
     }
+}
+
+- (NSString *)priceString {
+    NSMutableString *priceString = [self.normalizedPriceString mutableCopy];
+    NSInteger maximumFractionDigits = self.formatter.maximumFractionDigits;
+    if (maximumFractionDigits > 0) {
+        while (priceString.length <= maximumFractionDigits) {
+            [priceString insertString:@"0" atIndex:0];
+        }
+        [priceString insertString:@"." atIndex:priceString.length - maximumFractionDigits];
+    }
+    return priceString;
 }
 
 @end
@@ -84,7 +103,6 @@
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
     CHNTextField *priceTextField = (CHNTextField *)textField;
-    NSNumberFormatter *formatter = priceTextField.formatter;
 
     NSMutableString *normalizedPriceString = priceTextField.normalizedPriceString;
     if (string.length) {
@@ -101,18 +119,7 @@
         }
     }
     
-    priceTextField.text = normalizedPriceString;
-    
-    NSMutableString *priceString = [normalizedPriceString mutableCopy];
-    NSInteger maximumFractionDigits = formatter.maximumFractionDigits;
-    if (maximumFractionDigits > 0) {
-        while (priceString.length <= maximumFractionDigits) {
-            [priceString insertString:@"0" atIndex:0];
-        }
-        [priceString insertString:@"." atIndex:priceString.length - maximumFractionDigits];
-    }
-    
-    priceTextField.text = priceString;
+    priceTextField.text = priceTextField.priceString;
     return NO;
 }
 
