@@ -66,6 +66,18 @@
     _formatter.minimumFractionDigits = _formatter.maximumFractionDigits;
 }
 
+- (void)setText:(NSString *)text {
+    NSDecimalNumber *price = [NSDecimalNumber decimalNumberWithString:text locale:[NSLocale localeWithLocaleIdentifier:@"en"]];
+    if (price == [NSDecimalNumber notANumber]) {
+        super.text = @"";
+        self.price = [NSDecimalNumber zero];
+        self.normalizedPriceString = [NSMutableString string];
+    } else {
+        super.text = [self.formatter stringFromNumber:price];
+        self.price = price;
+    }
+}
+
 @end
 
 @implementation CHNTextFieldDelegateWrapper
@@ -89,6 +101,8 @@
         }
     }
     
+    priceTextField.text = normalizedPriceString;
+    
     NSMutableString *priceString = [normalizedPriceString mutableCopy];
     NSInteger maximumFractionDigits = formatter.maximumFractionDigits;
     if (maximumFractionDigits > 0) {
@@ -98,10 +112,7 @@
         [priceString insertString:@"." atIndex:priceString.length - maximumFractionDigits];
     }
     
-    NSDecimalNumber *price = [NSDecimalNumber decimalNumberWithString:priceString locale:[NSLocale localeWithLocaleIdentifier:@"en"]];
-    priceTextField.text = [formatter stringFromNumber:price];
-    priceTextField.price = price;
-    
+    priceTextField.text = priceString;
     return NO;
 }
 
