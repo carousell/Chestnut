@@ -12,6 +12,8 @@
 
 @interface MainViewController () <UITableViewDataSource, UITableViewDelegate>
 
+@property (weak, nonatomic) CHNTextField *priceTextField;
+
 @end
 
 @implementation MainViewController
@@ -26,11 +28,23 @@
     tableView.rowHeight = 44;
     tableView.allowsSelection = NO;
     [self.view addSubview:tableView];
+    
+    UIButton *button = [[UIButton alloc] initWithFrame:CGRectMake(40, 10, 240, 44)];
+    [button addTarget:self action:@selector(didTapButton:) forControlEvents:UIControlEventTouchUpInside];
+    [button setTitle:@"Log price" forState:UIControlStateNormal];
+    [button setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    button.titleLabel.textAlignment = NSTextAlignmentCenter;
+    tableView.tableFooterView = button;
+    tableView.tableFooterView.frame = CGRectMake(0, 0, CGRectGetWidth(self.view.frame), 64);
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)didTapButton:(id)sender {
+    NSLog(@"%@", [self.priceTextField amount]);
 }
 
 #pragma mark UITableViewDataSource
@@ -59,6 +73,7 @@
         priceTextField.adjustsFontSizeToFitWidth = YES;
         priceTextField.clearButtonMode = UITextFieldViewModeNever;
         priceTextField.textAlignment = NSTextAlignmentRight;
+        self.priceTextField = priceTextField;
         [cell.contentView addSubview:priceTextField];
     }
     return cell;

@@ -8,8 +8,8 @@
 
 #import "CHNTextField.h"
 
-#define MAX_PRICE @"9999999999999"
-#define MAX_PRICE_DIGITS 13
+#define MAX_VALUE   @"9999999999999"
+#define MAX_DIGITS  13
 
 @interface CHNTextFieldDelegateWrapper : NSObject <UITextFieldDelegate>
 
@@ -18,8 +18,7 @@
 @interface CHNTextField ()
 
 @property (strong, nonatomic) CHNTextFieldDelegateWrapper *delegateWrapper;
-@property (strong, nonatomic) NSDecimalNumber *price;
-@property (strong, nonatomic) NSMutableString *normalizedPriceString;
+@property (strong, nonatomic) NSMutableString *amountNormalizedString;
 
 @end
 
@@ -47,8 +46,8 @@
     CHNTextFieldDelegateWrapper *delegateWrapper = [[CHNTextFieldDelegateWrapper alloc] init];
     self.delegateWrapper = delegateWrapper;
     self.delegate = delegateWrapper;
-    self.keyboardType = UIKeyboardTypeNumberPad;
-    self.normalizedPriceString = [NSMutableString string];
+    self.keyboardType = UIKeyboardTypeDecimalPad;
+    self.amountNormalizedString = [NSMutableString string];
 }
 
 - (CGRect)editingRectForBounds:(CGRect)bounds {
@@ -66,35 +65,59 @@
     _formatter.minimumFractionDigits = _formatter.maximumFractionDigits;
 }
 
-- (void)setText:(NSString *)text {
-    NSDecimalNumber *price = [NSDecimalNumber decimalNumberWithString:text locale:[NSLocale localeWithLocaleIdentifier:@"en"]];
-    if (price == [NSDecimalNumber notANumber]) {
-        super.text = @"";
-        self.price = [NSDecimalNumber zero];
-        self.normalizedPriceString = [NSMutableString string];
-    } else {
-        super.text = [self.formatter stringFromNumber:price];
-        self.price = price;
+- (void)setAmount:(NSDecimalNumber *)amount {
+    _amount = amount;
+    if (amount) {
+        NSMutableString *decimalString = [[amount stringValue] mutableCopy];
         NSInteger maximumFractionDigits = self.formatter.maximumFractionDigits;
-        NSRange decimalPointRange = [text rangeOfString:@"." options:NSBackwardsSearch];
-        if (maximumFractionDigits <= 0 && decimalPointRange.location != NSNotFound) {
-            self.normalizedPriceString = [NSMutableString stringWithString:[text substringToIndex:decimalPointRange.location]];
+        NSRange decimalPointRange = [decimalString rangeOfString:@"." options:NSBackwardsSearch];
+        if (maximumFractionDigits <= 0) {
+            if (decimalPointRange.location != NSNotFound) {
+                [decimalString replaceCharactersInRange:NSMakeRange(decimalPointRange.location, decimalString.length) withString:@""];
+            }
         } else {
-            self.normalizedPriceString = [NSMutableString stringWithString:[text stringByReplacingOccurrencesOfString:@"." withString:@""]];
+            if (decimalPointRange.location == NSNotFound) {
+                [decimalString appendString:@"."];
+                decimalPointRange.location = decimalString.length - 1;
+            }
+            while (decimalString.length - decimalPointRange.location < maximumFractionDigits + 1) {
+                [decimalString appendString:@"0"];
+            }
+            [decimalString replaceOccurrencesOfString:@"." withString:@"" options:NSBackwardsSearch range:NSMakeRange(0, decimalString.length)];
         }
+        self.amountNormalizedString = decimalString;
+    } else {
+        self.amountNormalizedString = [NSMutableString string];
     }
+    self.text = [self.formatter stringFromNumber:amount];
 }
 
-- (NSString *)priceString {
-    NSMutableString *priceString = [self.normalizedPriceString mutableCopy];
-    NSInteger maximumFractionDigits = self.formatter.maximumFractionDigits;
-    if (maximumFractionDigits > 0) {
-        while (priceString.length <= maximumFractionDigits) {
-            [priceString insertString:@"0" atIndex:0];
-        }
-        [priceString insertString:@"." atIndex:priceString.length - maximumFractionDigits];
+- (NSString *)decimalAmountString {
+    if (!self.amount) {
+        return nil;
     }
-    return priceString;
+    
+    NSMutableString *decimalAmountString = [NSMutableString stringWithString:[self.amount stringValue]];
+    NSInteger maximumFractionDigits = self.formatter.maximumFractionDigits;
+    NSRange decimalPointRange = [decimalAmountString rangeOfString:@"." options:NSBackwardsSearch];
+    if (maximumFractionDigits > 0 && decimalPointRange.location != NSNotFound) {
+        while (decimalAmountString.length - decimalPointRange.location < maximumFractionDigits + 1) {
+            [decimalAmountString appendString:@"0"];
+        }
+    }
+    return [NSString stringWithString:decimalAmountString];
+}
+
+- (void)setDecimalAmountString:(NSString *)decimalAmountString {
+    NSDecimalNumber *amount = [NSDecimalNumber decimalNumberWithString:decimalAmountString locale:[NSLocale localeWithLocaleIdentifier:@"en"]];
+    self.amount = amount;
+}
+
+#pragma mark Private
+
+- (void)updateAmount:(NSDecimalNumber *)amount {
+    _amount = amount;
+    self.text = [self.formatter stringFromNumber:amount];
 }
 
 @end
@@ -102,24 +125,41 @@
 @implementation CHNTextFieldDelegateWrapper
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
-    CHNTextField *priceTextField = (CHNTextField *)textField;
-
-    NSMutableString *normalizedPriceString = priceTextField.normalizedPriceString;
+    CHNTextField *currencyTextField = (CHNTextField *)textField;
+    NSNumberFormatter *formatter = currencyTextField.formatter;
+    
+    if (currencyTextField.shouldClearOnBeginEditing) {
+        currencyTextField.amount = [NSDecimalNumber zero];
+        currencyTextField.shouldClearOnBeginEditing = NO;
+    }
+    
+    NSInteger maximumFractionDigits = formatter.maximumFractionDigits;
+    NSMutableString *amountNormalizedString = currencyTextField.amountNormalizedString;
     if (string.length) {
-        if (normalizedPriceString.length >= MAX_PRICE_DIGITS) {
-            [normalizedPriceString setString:MAX_PRICE];
+        if (amountNormalizedString.length >= MAX_DIGITS) {
+            [amountNormalizedString setString:MAX_VALUE];
         } else {
-            [normalizedPriceString appendString:[NSString stringWithFormat:@"%ld", (long)[string integerValue]]];
+            [amountNormalizedString appendString:[NSString stringWithFormat:@"%ld", (long)[string integerValue]]];
         }
     } else {
-        if (normalizedPriceString.length > 1) {
-            [normalizedPriceString deleteCharactersInRange:NSMakeRange(normalizedPriceString.length - 1, 1)];
+        if (amountNormalizedString.length > 1) {
+            [amountNormalizedString deleteCharactersInRange:NSMakeRange(amountNormalizedString.length - 1, 1)];
         } else {
-            [normalizedPriceString setString:@"0"];
+            [amountNormalizedString setString:@"0"];
         }
     }
     
-    priceTextField.text = priceTextField.priceString;
+    NSMutableString *decimalString = [amountNormalizedString mutableCopy];
+    if (maximumFractionDigits > 0) {
+        while (decimalString.length <= maximumFractionDigits) {
+            [decimalString insertString:@"0" atIndex:0];
+        }
+        [decimalString insertString:@"." atIndex:decimalString.length - maximumFractionDigits];
+    }
+    
+    NSDecimalNumber *amount = [NSDecimalNumber decimalNumberWithString:decimalString locale:[NSLocale localeWithLocaleIdentifier:@"en"]];
+    [currencyTextField updateAmount:amount];
+    
     return NO;
 }
 

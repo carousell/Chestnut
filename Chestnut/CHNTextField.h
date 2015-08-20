@@ -11,7 +11,10 @@
 @interface CHNTextField : UITextField
 
 @property (strong, nonatomic) NSNumberFormatter *formatter;
+@property (assign, nonatomic) BOOL shouldClearOnBeginEditing;
+@property (strong, nonatomic) NSDecimalNumber *amount;
 
-- (NSString *)priceString;
+- (NSString *)decimalAmountString;
+- (void)setDecimalAmountString:(NSString *)decimalAmountString;
 
 @end
