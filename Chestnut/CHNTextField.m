@@ -38,6 +38,11 @@
     return self;
 }
 
+- (void)awakeFromNib {
+    [super awakeFromNib];
+    [self initialize];
+}
+
 - (void)dealloc {
     self.delegate = nil;
 }
@@ -123,6 +128,12 @@
 @end
 
 @implementation CHNTextFieldDelegateWrapper
+
+- (BOOL)textFieldShouldClear:(UITextField *)textField {
+    CHNTextField *currencyTextField = (CHNTextField *)textField;
+    currencyTextField.amount = nil;
+    return YES;
+}
 
 - (BOOL)textField:(UITextField *)textField shouldChangeCharactersInRange:(NSRange)range replacementString:(NSString *)string {
     CHNTextField *currencyTextField = (CHNTextField *)textField;
