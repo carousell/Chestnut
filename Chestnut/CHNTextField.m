@@ -67,7 +67,9 @@
 
 - (void)setFormatter:(NSNumberFormatter *)formatter {
     _formatter = formatter;
-    _formatter.minimumFractionDigits = _formatter.maximumFractionDigits;
+    NSInteger fractionDigits = _formatter.maximumFractionDigits > 0 ? 2 : 0;
+    _formatter.maximumFractionDigits = fractionDigits;
+    _formatter.minimumFractionDigits = fractionDigits;
 }
 
 - (void)setAmount:(NSDecimalNumber *)amount {
@@ -78,7 +80,7 @@
         NSRange decimalPointRange = [decimalString rangeOfString:@"." options:NSBackwardsSearch];
         if (maximumFractionDigits <= 0) {
             if (decimalPointRange.location != NSNotFound) {
-                [decimalString replaceCharactersInRange:NSMakeRange(decimalPointRange.location, decimalString.length) withString:@""];
+                [decimalString replaceCharactersInRange:NSMakeRange(decimalPointRange.location, decimalString.length - decimalPointRange.location) withString:@""];
             }
         } else {
             if (decimalPointRange.location == NSNotFound) {
@@ -115,6 +117,9 @@
 
 - (void)setDecimalAmountString:(NSString *)decimalAmountString {
     NSDecimalNumber *amount = [NSDecimalNumber decimalNumberWithString:decimalAmountString locale:[NSLocale localeWithLocaleIdentifier:@"en"]];
+    NSInteger fractionDigits = self.formatter.maximumFractionDigits;
+    NSDecimalNumberHandler *roundBehavior = [NSDecimalNumberHandler decimalNumberHandlerWithRoundingMode:NSRoundDown scale:fractionDigits raiseOnExactness:NO raiseOnOverflow:NO raiseOnUnderflow:NO raiseOnDivideByZero:YES];
+    amount = [amount decimalNumberByRoundingAccordingToBehavior:roundBehavior];
     self.amount = amount;
 }
 
