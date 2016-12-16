@@ -8,11 +8,20 @@
 
 #import <UIKit/UIKit.h>
 
+@class CHNTextField;
+@protocol CHNTextFieldDelegate <NSObject>
+
+@optional
+- (void)CHNTextField:(CHNTextField *)textField didUpdateAmount:(NSDecimalNumber *)amount;
+
+@end
+
 @interface CHNTextField : UITextField
 
 @property (strong, nonatomic) NSNumberFormatter *formatter;
 @property (assign, nonatomic) BOOL shouldClearOnBeginEditing;
 @property (strong, nonatomic) NSDecimalNumber *amount;
+@property (weak, nonatomic) id<CHNTextFieldDelegate> CHNTextFieldDelegate;
 
 - (NSString *)decimalAmountString;
 - (void)setDecimalAmountString:(NSString *)decimalAmountString;

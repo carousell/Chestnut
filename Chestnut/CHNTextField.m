@@ -12,7 +12,7 @@
 #define MAX_DIGITS  13
 
 @interface CHNTextFieldDelegateWrapper : NSObject <UITextFieldDelegate>
-
+@property (weak, nonatomic) id<CHNTextFieldDelegate> delegate;
 @end
 
 @interface CHNTextField ()
@@ -53,6 +53,10 @@
     self.delegate = delegateWrapper;
     self.keyboardType = UIKeyboardTypeDecimalPad;
     self.amountNormalizedString = [NSMutableString string];
+}
+
+- (void)setCHNTextFieldDelegate:(id<CHNTextFieldDelegate>)CHNTextFieldDelegate {
+    self.delegateWrapper.delegate = CHNTextFieldDelegate;
 }
 
 - (CGRect)editingRectForBounds:(CGRect)bounds {
@@ -175,6 +179,10 @@
     
     NSDecimalNumber *amount = [NSDecimalNumber decimalNumberWithString:decimalString locale:[NSLocale localeWithLocaleIdentifier:@"en"]];
     [currencyTextField updateAmount:amount];
+
+    if ([self.delegate respondsToSelector:@selector(CHNTextField:didUpdateAmount:)]) {
+        [self.delegate CHNTextField:currencyTextField didUpdateAmount:amount];
+    }
     
     return NO;
 }
