@@ -138,6 +138,14 @@
 
 @implementation CHNTextFieldDelegateWrapper
 
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
+	if ([self.delegate respondsToSelector:@selector(textFieldShouldBeginEditing:)]) {
+		CHNTextField *currentTextField = (CHNTextField *)textField;
+		return [self.delegate textFieldShouldBeginEditing:currentTextField];
+	}
+	return YES;
+}
+
 - (BOOL)textFieldShouldClear:(UITextField *)textField {
     CHNTextField *currencyTextField = (CHNTextField *)textField;
     currencyTextField.amount = nil;
