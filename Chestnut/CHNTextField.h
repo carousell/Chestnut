@@ -12,6 +12,7 @@
 @protocol CHNTextFieldDelegate <NSObject>
 
 @optional
+- (BOOL)textFieldShouldBeginEditing:(CHNTextField *)textField;
 - (void)CHNTextField:(CHNTextField *)textField didUpdateAmount:(NSDecimalNumber *)amount;
 
 @end
