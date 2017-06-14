@@ -13,6 +13,7 @@
 
 @optional
 - (BOOL)textFieldShouldBeginEditing:(CHNTextField *)textField;
+- (BOOL)textFieldShouldEndEditing:(CHNTextField *)textField;
 - (void)CHNTextField:(CHNTextField *)textField didUpdateAmount:(NSDecimalNumber *)amount;
 
 @end

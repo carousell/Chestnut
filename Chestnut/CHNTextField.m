@@ -146,6 +146,14 @@
 	return YES;
 }
 
+- (BOOL)textFieldShouldEndEditing:(UITextField *)textField {
+    if ([self.delegate respondsToSelector:@selector(textFieldShouldEndEditing:)]) {
+        CHNTextField *currentTextField = (CHNTextField *)textField;
+        return [self.delegate textFieldShouldEndEditing:currentTextField];
+    }
+    return YES;
+}
+
 - (BOOL)textFieldShouldClear:(UITextField *)textField {
     CHNTextField *currencyTextField = (CHNTextField *)textField;
     currencyTextField.amount = nil;
