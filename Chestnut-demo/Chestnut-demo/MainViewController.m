@@ -9,6 +9,7 @@
 #import "MainViewController.h"
 
 #import "CHNTextField.h"
+#import "CRSCurrencyField.h"
 
 @interface MainViewController () <UITableViewDataSource, UITableViewDelegate>
 
@@ -54,29 +55,52 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 1;
+    return 2;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"PriceCell"];
-    if (!cell) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"PriceCell"];
-        cell.textLabel.text = @"Item Price";
-        NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
-        formatter.numberStyle = NSNumberFormatterCurrencyStyle;
-        formatter.locale = [NSLocale localeWithLocaleIdentifier:@"zh_TW"];
-        formatter.maximumFractionDigits = 0;
-        CHNTextField *priceTextField = [[CHNTextField alloc] initWithFrame:CGRectMake(140, 0, 170, 44)];
-        priceTextField.formatter = formatter;
-        priceTextField.placeholder = @"Set Price";
-        priceTextField.minimumFontSize = 10;
-        priceTextField.adjustsFontSizeToFitWidth = YES;
-        priceTextField.clearButtonMode = UITextFieldViewModeNever;
-        priceTextField.textAlignment = NSTextAlignmentRight;
-        self.priceTextField = priceTextField;
-        [cell.contentView addSubview:priceTextField];
+    if (indexPath.row == 0) {
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"PriceCell"];
+        if (!cell) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"PriceCell"];
+            cell.textLabel.text = @"Item Price";
+            NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+            formatter.numberStyle = NSNumberFormatterCurrencyStyle;
+            formatter.locale = [NSLocale localeWithLocaleIdentifier:@"zh_TW"];
+            formatter.maximumFractionDigits = 0;
+            CHNTextField *priceTextField = [[CHNTextField alloc] initWithFrame:CGRectMake(140, 0, 170, 44)];
+            priceTextField.formatter = formatter;
+            priceTextField.placeholder = @"Set Price";
+            priceTextField.minimumFontSize = 10;
+            priceTextField.adjustsFontSizeToFitWidth = YES;
+            priceTextField.clearButtonMode = UITextFieldViewModeNever;
+            priceTextField.textAlignment = NSTextAlignmentRight;
+            self.priceTextField = priceTextField;
+            [cell.contentView addSubview:priceTextField];
+        }
+        return cell;
+    } else if (indexPath.row == 1) {
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"PriceCell2"];
+        if (!cell) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"PriceCell2"];
+            cell.textLabel.text = @"Item Price";
+            NSNumberFormatter *formatter = [[NSNumberFormatter alloc] init];
+            formatter.numberStyle = NSNumberFormatterCurrencyStyle;
+            formatter.locale = [NSLocale localeWithLocaleIdentifier:@"zh_TW"];
+            formatter.maximumFractionDigits = 0;
+            CRSCurrencyField *priceTextField = [[CRSCurrencyField alloc] initWithFrame:CGRectMake(140, 0, 170, 44)];
+//            priceTextField.formatter = formatter;
+            priceTextField.placeholder = @"Set Price";
+            priceTextField.minimumFontSize = 10;
+            priceTextField.adjustsFontSizeToFitWidth = YES;
+            priceTextField.clearButtonMode = UITextFieldViewModeNever;
+            priceTextField.textAlignment = NSTextAlignmentRight;
+//            self.priceTextField = priceTextField;
+            [cell.contentView addSubview:priceTextField];
+        }
+        return cell;
     }
-    return cell;
+    return nil;
 }
 
 

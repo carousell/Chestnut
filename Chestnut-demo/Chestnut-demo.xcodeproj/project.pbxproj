@@ -14,6 +14,7 @@
 		8B21B57E1B84DADA0088D0D6 /* Chestnut_demoTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B21B57D1B84DADA0088D0D6 /* Chestnut_demoTests.m */; };
 		8B21B58A1B84DBA60088D0D6 /* CHNTextField.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B21B5891B84DBA60088D0D6 /* CHNTextField.m */; };
 		8B21B58D1B84DF290088D0D6 /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B21B58C1B84DF290088D0D6 /* MainViewController.m */; };
+		8B5E1B751EF17487006DD10F /* CRSCurrencyField.m in Sources */ = {isa = PBXBuildFile; fileRef = 8B5E1B741EF17487006DD10F /* CRSCurrencyField.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,6 +42,8 @@
 		8B21B5891B84DBA60088D0D6 /* CHNTextField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CHNTextField.m; path = ../Chestnut/CHNTextField.m; sourceTree = "<group>"; };
 		8B21B58B1B84DF290088D0D6 /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
 		8B21B58C1B84DF290088D0D6 /* MainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainViewController.m; sourceTree = "<group>"; };
+		8B5E1B731EF17487006DD10F /* CRSCurrencyField.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CRSCurrencyField.h; path = ../Chestnut/CRSCurrencyField.h; sourceTree = "<group>"; };
+		8B5E1B741EF17487006DD10F /* CRSCurrencyField.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = CRSCurrencyField.m; path = ../Chestnut/CRSCurrencyField.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -125,6 +128,8 @@
 			children = (
 				8B21B5881B84DBA60088D0D6 /* CHNTextField.h */,
 				8B21B5891B84DBA60088D0D6 /* CHNTextField.m */,
+				8B5E1B731EF17487006DD10F /* CRSCurrencyField.h */,
+				8B5E1B741EF17487006DD10F /* CRSCurrencyField.m */,
 			);
 			name = Chestnut;
 			sourceTree = "<group>";
@@ -178,6 +183,7 @@
 				TargetAttributes = {
 					8B21B5631B84DADA0088D0D6 = {
 						CreatedOnToolsVersion = 6.4;
+						LastSwiftMigration = 0830;
 					};
 					8B21B5761B84DADA0088D0D6 = {
 						CreatedOnToolsVersion = 6.4;
@@ -228,6 +234,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8B5E1B751EF17487006DD10F /* CRSCurrencyField.m in Sources */,
 				8B21B56D1B84DADA0088D0D6 /* AppDelegate.m in Sources */,
 				8B21B56A1B84DADA0088D0D6 /* main.m in Sources */,
 				8B21B58A1B84DBA60088D0D6 /* CHNTextField.m in Sources */,
@@ -349,10 +356,13 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = "Chestnut-demo/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -360,10 +370,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				INFOPLIST_FILE = "Chestnut-demo/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -420,6 +432,7 @@
 				8B21B5831B84DADA0088D0D6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		8B21B5841B84DADA0088D0D6 /* Build configuration list for PBXNativeTarget "Chestnut-demoTests" */ = {
 			isa = XCConfigurationList;
@@ -428,6 +441,7 @@
 				8B21B5861B84DADA0088D0D6 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
